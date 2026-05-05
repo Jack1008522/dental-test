@@ -1,68 +1,80 @@
-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>歯科国試クイズリーダー</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);color:var(--color-text-primary)}
-.app{max-width:720px;margin:0 auto;padding:1rem 0}
-.header{padding:1rem 1.25rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.5rem}
-.subject-tabs{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.subject-tab{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-size:13px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s}
+body{font-family:sans-serif;background:#f0f4f8;color:#1a1a1a;font-size:16px}
+.app{max-width:760px;margin:0 auto;padding:0 0 2rem}
+.header{background:#fff;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid #e0e0e0;margin-bottom:1rem;position:sticky;top:0;z-index:10}
+.app-title{font-size:20px;font-weight:700;color:#0F6E56;margin-bottom:12px}
+.subject-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.subject-tab{padding:10px 18px;border-radius:8px;border:1.5px solid #ccc;font-size:15px;cursor:pointer;background:#f5f5f5;color:#555;font-weight:600;transition:all .15s;min-height:44px}
 .subject-tab.active{background:#0F6E56;color:#fff;border-color:#0F6E56}
-.chapter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
-.chapter-tab{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:12px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary);transition:all .15s}
+.chapter-label{font-size:13px;color:#666;margin-bottom:6px;font-weight:600}
+.chapter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chapter-tab{padding:8px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;cursor:pointer;background:#f5f5f5;color:#555;font-weight:500;transition:all .15s;min-height:40px}
 .chapter-tab.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
-.chapter-tab.done{border-color:#9FE1CB;color:#085041}
-.progress-bar{height:6px;background:var(--color-background-secondary);border-radius:3px;margin-bottom:1rem;overflow:hidden}
-.progress-fill{height:100%;background:#1D9E75;border-radius:3px;transition:width .3s}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
-.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;text-align:center}
-.stat-num{font-size:20px;font-weight:500;color:var(--color-text-primary)}
-.stat-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.q-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
-.q-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.q-num{font-size:11px;font-weight:500;background:#0F6E56;color:#fff;padding:3px 8px;border-radius:var(--border-radius-md)}
-.q-type{font-size:11px;background:var(--color-background-secondary);color:var(--color-text-secondary);padding:3px 8px;border-radius:var(--border-radius-md)}
-.q-text{font-size:14px;line-height:1.7;margin-bottom:14px;color:var(--color-text-primary)}
-.options{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.option{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;transition:all .15s;font-size:13px;line-height:1.5;color:var(--color-text-primary);background:var(--color-background-primary)}
-.option:hover:not(.locked){border-color:#1D9E75;background:var(--color-background-secondary)}
-.option.selected{border-color:#1D9E75;background:#E1F5EE}
-.option.correct{border-color:#1D9E75;background:#E1F5EE}
-.option.wrong{border-color:#E24B4A;background:#FCEBEB}
-.option.locked{cursor:default}
-.opt-label{font-weight:500;min-width:18px;font-size:13px;color:var(--color-text-secondary)}
-.option.selected .opt-label{color:#0F6E56}
-.option.correct .opt-label{color:#0F6E56}
-.option.wrong .opt-label{color:#A32D2D}
-.submit-btn{width:100%;padding:9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);font-size:13px;cursor:pointer;color:var(--color-text-primary);transition:all .15s}
-.submit-btn:hover{background:#0F6E56;color:#fff;border-color:#0F6E56}
-.result-box{margin-top:10px;padding:10px 12px;border-radius:var(--border-radius-md);font-size:13px;line-height:1.6}
-.result-box.correct-r{background:#E1F5EE;border:0.5px solid #5DCAA5;color:#04342C}
-.result-box.wrong-r{background:#FCEBEB;border:0.5px solid #F09595;color:#501313}
-.result-title{font-weight:500;margin-bottom:4px;font-size:13px}
-.next-btn{width:100%;margin-top:8px;padding:8px;border-radius:var(--border-radius-md);border:0.5px solid #1D9E75;background:#1D9E75;color:#fff;font-size:13px;cursor:pointer}
-.next-btn:hover{background:#0F6E56}
-.complete-box{text-align:center;padding:2rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg)}
-.complete-score{font-size:48px;font-weight:500;color:#0F6E56;margin:8px 0}
-.retry-btn{margin-top:1rem;padding:8px 20px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);font-size:13px;cursor:pointer;color:var(--color-text-primary)}
-.chapter-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500}
-</style>
+.chapter-tab.done{border-color:#9FE1CB;color:#085041;background:#f0fdf8}
+.progress-bar{height:8px;background:#e0e0e0;border-radius:4px;margin-bottom:10px;overflow:hidden}
+.progress-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width .3s}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.stat{background:#f0fdf8;border:1px solid #9FE1CB;border-radius:8px;padding:10px 8px;text-align:center}
+.stat-num{font-size:22px;font-weight:700;color:#0F6E56}
+.stat-label{font-size:12px;color:#555;margin-top:2px}
 
+.quiz-area{padding:0 12px}
+.q-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.q-meta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.q-num{font-size:13px;font-weight:700;background:#0F6E56;color:#fff;padding:4px 10px;border-radius:6px}
+.q-type{font-size:12px;background:#f0f0f0;color:#555;padding:4px 10px;border-radius:6px}
+.q-result-badge{font-size:13px;font-weight:700}
+.q-text{font-size:17px;line-height:1.75;margin-bottom:16px;color:#1a1a1a;font-weight:500}
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.option{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid #ddd;border-radius:10px;cursor:pointer;transition:all .15s;font-size:16px;line-height:1.6;color:#1a1a1a;background:#fff;min-height:52px}
+.option:hover:not(.locked){border-color:#1D9E75;background:#f0fdf8}
+.option.selected{border-color:#1D9E75;background:#e8f8f2}
+.option.correct{border-color:#1D9E75;background:#e8f8f2}
+.option.wrong{border-color:#E24B4A;background:#fff0f0}
+.option.locked{cursor:default}
+.opt-label{font-weight:700;min-width:24px;font-size:16px;color:#888;flex-shrink:0;margin-top:1px}
+.option.selected .opt-label,.option.correct .opt-label{color:#0F6E56}
+.option.wrong .opt-label{color:#A32D2D}
+.submit-btn{width:100%;padding:14px;border-radius:10px;border:2px solid #1D9E75;background:#1D9E75;font-size:17px;font-weight:700;cursor:pointer;color:#fff;transition:all .15s;min-height:52px;margin-top:4px}
+.submit-btn:hover{background:#0F6E56;border-color:#0F6E56}
+.submit-btn:disabled{background:#ccc;border-color:#ccc;cursor:not-allowed}
+.result-box{margin-top:12px;padding:14px 16px;border-radius:10px;font-size:15px;line-height:1.7}
+.result-box.correct-r{background:#e8f8f2;border:1.5px solid #5DCAA5;color:#04342C}
+.result-box.wrong-r{background:#fff0f0;border:1.5px solid #F09595;color:#501313}
+.result-title{font-weight:700;margin-bottom:6px;font-size:16px}
+.correct-ans{font-weight:700;color:#0F6E56;margin-bottom:6px;font-size:15px}
+.exp-text{font-size:14px;line-height:1.7;color:#444}
+.complete-box{text-align:center;padding:2.5rem 1.5rem;background:#fff;border:1px solid #e0e0e0;border-radius:12px;margin:0 12px}
+.complete-score{font-size:56px;font-weight:700;color:#0F6E56;margin:12px 0}
+.retry-btn{margin-top:1.25rem;padding:14px 28px;border-radius:10px;border:2px solid #1D9E75;background:#fff;font-size:16px;font-weight:700;cursor:pointer;color:#1D9E75;transition:all .15s}
+.retry-btn:hover{background:#1D9E75;color:#fff}
+</style>
+</head>
+<body>
 <div class="app">
 <div class="header">
-  <div style="font-size:17px;font-weight:500;margin-bottom:8px">歯科国試 問題集</div>
+  <div class="app-title">🦷 歯科国試 問題集</div>
   <div class="subject-tabs">
     <button class="subject-tab active" onclick="switchSubject('masui')">歯科麻酔学（100問）</button>
     <button class="subject-tab" onclick="switchSubject('rad')">歯科放射線学（100問）</button>
   </div>
+  <div class="chapter-label">チャプター選択</div>
   <div id="chapter-tabs" class="chapter-tabs"></div>
   <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">解答済み</div></div>
-    <div class="stat"><div class="stat-num" id="s-correct" style="color:#0F6E56">0</div><div class="stat-label">正解</div></div>
+    <div class="stat"><div class="stat-num" id="s-correct">0</div><div class="stat-label">正解</div></div>
     <div class="stat"><div class="stat-num" id="s-rate">0%</div><div class="stat-label">正解率</div></div>
   </div>
 </div>
-<div id="quiz-area"></div>
+<div class="quiz-area" id="quiz-area"></div>
 </div>
 
 <script>
@@ -105,7 +117,7 @@ m1: [
 {q:"局所麻酔後に起こりうる合併症として正しいのはどれか。3つ選べ。",t:"複数選択（3つ）",opts:["血管迷走神経反射（失神）","アナフィラキシーショック","血管内誤注入による中毒","開口障害（トリスムス）","骨折"],correct:[0,1,2,3],exp:"局所麻酔後の合併症には、血管迷走神経反射（処置不安・疼痛による）、アレルギー反応・アナフィラキシー、血管内誤注入による局所麻酔薬中毒、針刺し後のトリスムス（筋肉内誤注射）がある。骨折は局所麻酔の合併症としては起こりにくい。"},
 ],
 m2: [
-{q:"全身麻酔の三要素として正しいのはどれか。3つ選べ。",t:"複数選択（3つ）",opts:["鎮痛","鎮静（催眠）","筋弛緩","血圧維持","酸素投与"],correct:[0,1,2],exp:"全身麻酔の三要素（麻酔の三徴）は①鎮痛（analgesiaまたはanalgesia）、②意識消失（鎮静・催眠）、③筋弛緩である。この3要素を適切に制御することで安全な全身麻酔が可能となる。現代の均衡麻酔ではそれぞれの要素を異なる薬剤で担当する。"},
+{q:"全身麻酔の三要素として正しいのはどれか。3つ選べ。",t:"複数選択（3つ）",opts:["鎮痛","鎮静（催眠）","筋弛緩","血圧維持","酸素投与"],correct:[0,1,2],exp:"全身麻酔の三要素（麻酔の三徴）は①鎮痛、②意識消失（鎮静・催眠）、③筋弛緩である。この3要素を適切に制御することで安全な全身麻酔が可能となる。現代の均衡麻酔ではそれぞれの要素を異なる薬剤で担当する。"},
 {q:"術前検査で呼吸器障害の病型分類に利用されるのはどれか。1つ選べ。",t:"4択",opts:["心電図","血液ガス分析","カプノグラフィ","スパイロメトリ","パルスオキシメータ"],correct:[3],exp:"スパイロメトリはスパイロメータを用いて行う呼吸機能検査で、肺活量・1回換気量・1秒量などを測定できる。肺気量分画の情報から拘束性換気障害・閉塞性換気障害・混合性換気障害など呼吸器障害の病型分類が可能である。"},
 {q:"パルスオキシメータが有用な病態はどれか。2つ選べ。",t:"複数選択（2つ）",opts:["上気道閉塞","過換気症候群","クモ膜下出血","血管迷走神経反射","異常絞扼反射"],correct:[0,3],exp:"パルスオキシメータはSpO₂と脈拍数をリアルタイムに測定できる。上気道閉塞ではSpO₂が低下するため早期発見に有用。血管迷走神経反射（迷走神経反射性失神）では副交感神経優位により脈拍数が低下するため検出可能。過換気症候群ではSpO₂は正常のため判別できない。"},
 {q:"医療用酸素ボンベ（ガス容量500L、最高充填圧力14.7MPa）で、圧力計が8MPaを示すとき、3L/分で使用した場合の使用可能時間はどれか。1つ選べ。",t:"4択",opts:["約30分","約45分","約90分","約135分"],correct:[2],exp:"酸素ボンベの残量＝容量×（現在圧力÷最高充填圧力）＝500×(8÷14.7)≒272L。使用可能時間＝272÷3≒90.6分。よって約90分が正解。酸素残量の計算は全身麻酔管理において非常に重要である。"},
@@ -247,6 +259,7 @@ let currentSubject = 'masui';
 let currentChapter = 'm1';
 let answers = {};
 let scores = {};
+window.tempSelected = {};
 
 function initScores() {
   Object.keys(ALL_QUESTIONS).forEach(s => {
@@ -270,15 +283,19 @@ function switchSubject(s) {
   currentSubject = s;
   currentChapter = getChapters()[0].id;
   answers = {};
+  window.tempSelected = {};
   renderChapterTabs();
   renderQuiz();
   updateStats();
-  document.querySelectorAll('.subject-tab').forEach((t,i)=>t.classList.toggle('active', (i===0&&s==='masui')||(i===1&&s==='rad')));
+  document.querySelectorAll('.subject-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0&&s==='masui')||(i===1&&s==='rad'));
+  });
 }
 
 function switchChapter(id) {
   currentChapter = id;
   answers = {};
+  window.tempSelected = {};
   renderQuiz();
   updateStats();
   renderChapterTabs();
@@ -290,7 +307,7 @@ function renderChapterTabs() {
   wrap.innerHTML = chs.map(c => {
     const sc = scores[currentSubject][c.id];
     const done = sc.total > 0;
-    return `<button class="chapter-tab${c.id===currentChapter?' active':''}${done?' done':''}" onclick="switchChapter('${c.id}')">${c.label}${done?` ${sc.correct}/${sc.total}`:''}</button>`;
+    return `<button class="chapter-tab${c.id===currentChapter?' active':''}${done?' done':''}" onclick="switchChapter('${c.id}')">${c.label}${done?' ✓':''}</button>`;
   }).join('');
 }
 
@@ -325,7 +342,9 @@ function renderQuiz() {
       <div class="q-meta">
         <span class="q-num">問 ${qi+1}</span>
         <span class="q-type">${q.t}</span>
-        ${submitted ? (ans.correct ? '<span style="font-size:12px;color:#0F6E56;font-weight:500">✓ 正解</span>' : '<span style="font-size:12px;color:#A32D2D;font-weight:500">✗ 不正解</span>') : ''}
+        ${submitted ? (ans.correct
+          ? '<span class="q-result-badge" style="color:#0F6E56">✓ 正解</span>'
+          : '<span class="q-result-badge" style="color:#A32D2D">✗ 不正解</span>') : ''}
       </div>
       <p class="q-text">${q.q}</p>
       <div class="options">
@@ -336,7 +355,7 @@ function renderQuiz() {
             if (q.correct.includes(oi)) cls += ' correct';
             else if (ans.selected.includes(oi)) cls += ' wrong';
           } else {
-            const sel = (window.tempSelected && window.tempSelected[qi]) || [];
+            const sel = (window.tempSelected[qi]) || [];
             if (sel.includes(oi)) cls += ' selected';
           }
           return `<div class="${cls}" onclick="toggleOpt(${qi},${oi})">
@@ -347,8 +366,9 @@ function renderQuiz() {
       </div>
       ${!submitted ? `<button class="submit-btn" onclick="submitAnswer(${qi})">解答する</button>` : ''}
       ${submitted ? `<div class="result-box ${ans.correct?'correct-r':'wrong-r'}">
-        <div class="result-title">${ans.correct ? '✓ 正解！' : '✗ 不正解'} 正答: ${q.correct.map(i=>String.fromCharCode(65+i)).join(', ')}</div>
-        <div>${q.exp}</div>
+        <div class="result-title">${ans.correct ? '✓ 正解！' : '✗ 不正解'}</div>
+        <div class="correct-ans">正答：${q.correct.map(i=>String.fromCharCode(65+i)).join('・')}</div>
+        <div class="exp-text">${q.exp}</div>
       </div>` : ''}
     </div>`;
   }).join('');
@@ -356,15 +376,13 @@ function renderQuiz() {
   if (Object.keys(answers).length === qs.length && qs.length > 0) {
     const cor = Object.values(answers).filter(a=>a.correct).length;
     area.innerHTML += `<div class="complete-box">
-      <div style="font-size:15px;color:var(--color-text-secondary)">このチャプターの結果</div>
+      <div style="font-size:16px;color:#555;font-weight:600">チャプター完了！</div>
       <div class="complete-score">${cor}/${qs.length}</div>
-      <div style="font-size:14px;color:var(--color-text-secondary)">正解率 ${Math.round(cor/qs.length*100)}%</div>
-      <button class="retry-btn" onclick="retryChapter()">もう一度解く</button>
+      <div style="font-size:16px;color:#555">正解率 ${Math.round(cor/qs.length*100)}%</div>
+      <button class="retry-btn" onclick="retryChapter()">🔄 もう一度解く</button>
     </div>`;
   }
 }
-
-window.tempSelected = {};
 
 window.toggleOpt = function(qi, oi) {
   if (answers[qi]) return;
@@ -388,7 +406,7 @@ window.toggleOpt = function(qi, oi) {
 window.submitAnswer = function(qi) {
   if (answers[qi]) return;
   const sel = window.tempSelected[qi] || [];
-  if (sel.length === 0) return;
+  if (sel.length === 0) { alert('選択肢を選んでください'); return; }
   const isCorrect = checkAnswer(qi, sel);
   answers[qi] = {selected:sel, correct:isCorrect};
   const sc = scores[currentSubject][currentChapter];
@@ -406,12 +424,13 @@ window.submitAnswer = function(qi) {
   if (btn) {
     const resultDiv = document.createElement('div');
     resultDiv.className = `result-box ${isCorrect?'correct-r':'wrong-r'}`;
-    resultDiv.innerHTML = `<div class="result-title">${isCorrect?'✓ 正解！':'✗ 不正解'} 正答: ${q.correct.map(i=>String.fromCharCode(65+i)).join(', ')}</div><div>${q.exp}</div>`;
+    resultDiv.innerHTML = `<div class="result-title">${isCorrect?'✓ 正解！':'✗ 不正解'}</div><div class="correct-ans">正答：${q.correct.map(i=>String.fromCharCode(65+i)).join('・')}</div><div class="exp-text">${q.exp}</div>`;
     btn.replaceWith(resultDiv);
   }
   const metaEl = card.querySelector('.q-meta');
   const badge = document.createElement('span');
-  badge.style.cssText = `font-size:12px;font-weight:500;color:${isCorrect?'#0F6E56':'#A32D2D'}`;
+  badge.className = 'q-result-badge';
+  badge.style.color = isCorrect ? '#0F6E56' : '#A32D2D';
   badge.textContent = isCorrect ? '✓ 正解' : '✗ 不正解';
   metaEl.appendChild(badge);
   const qs = getCurrentQuestions();
@@ -419,10 +438,10 @@ window.submitAnswer = function(qi) {
     const cor = Object.values(answers).filter(a=>a.correct).length;
     const fin = document.createElement('div');
     fin.className = 'complete-box';
-    fin.innerHTML = `<div style="font-size:15px;color:var(--color-text-secondary)">このチャプターの結果</div>
+    fin.innerHTML = `<div style="font-size:16px;color:#555;font-weight:600">チャプター完了！</div>
       <div class="complete-score">${cor}/${qs.length}</div>
-      <div style="font-size:14px;color:var(--color-text-secondary)">正解率 ${Math.round(cor/qs.length*100)}%</div>
-      <button class="retry-btn" onclick="retryChapter()">もう一度解く</button>`;
+      <div style="font-size:16px;color:#555">正解率 ${Math.round(cor/qs.length*100)}%</div>
+      <button class="retry-btn" onclick="retryChapter()">🔄 もう一度解く</button>`;
     document.getElementById('quiz-area').appendChild(fin);
   }
 };
@@ -438,3 +457,5 @@ renderChapterTabs();
 renderQuiz();
 updateStats();
 </script>
+</body>
+</html>
